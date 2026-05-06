@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .header { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .header-content { max-width: 1200px; margin: 0 auto; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav { display: flex; gap: 20px; flex-wrap: wrap; }
+        .nav a { color: #667eea; text-decoration: none; font-weight: 500; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav a:hover { background: #f0f3ff; }
+        .nav a.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; }
+        .nav a.logout { color: #e74c3c; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 30px 20px; }
+        
+        .settings-section { background: #fff; border-radius: 20px; padding: 35px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); margin-bottom: 30px; }
+        .settings-section h2 { font-size: 22px; color: #2c3e50; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #f0f0f0; display: flex; align-items: center; gap: 10px; }
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; margin-bottom: 10px; font-weight: 600; color: #2c3e50; font-size: 15px; }
+        .form-group input { 
+            width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-group input:focus { 
+            outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .form-group .hint { font-size: 13px; color: #95a5a6; margin-top: 8px; }
+        
+        .btn { padding: 14px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; text-decoration: none; border-radius: 25px; border: none; cursor: pointer; font-weight: 600; font-size: 16px; transition: transform 0.3s, box-shadow 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
+        .btn-success { background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); }
+        
+        .alert { padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; font-weight: 500; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
+        /* 统计卡片网格 */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .stat-card { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 25px; border-radius: 15px; text-align: center; border: 2px solid #e0e0e0; }
+        .stat-card .icon { font-size: 32px; margin-bottom: 10px; }
+        .stat-card .number { font-size: 36px; font-weight: bold; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-card .label { color: #7f8c8d; font-size: 14px; margin-top: 5px; }
+        
+        /* 信息表格 */
+        .info-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .info-table tr { border-bottom: 1px solid #f0f0f0; }
+        .info-table tr:last-child { border-bottom: none; }
+        .info-table td { padding: 15px 10px; }
+        .info-table td:first-child { color: #7f8c8d; width: 150px; font-weight: 500; }
+        .info-table td:last-child { color: #2c3e50; font-weight: 600; }
+        .info-table code { background: #e9ecef; padding: 3px 10px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; color: #667eea; font-size: 13px; }
+        
+        /* 状态标签 */
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+        .status-online { background: #d4edda; color: #155724; }
+        .status-offline { background: #f8d7da; color: #721c24; }
+        
+        /* 系统信息卡片 */
+        .sys-info-card { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-top: 15px; }
+        .sys-info-card h4 { color: #2c3e50; margin-bottom: 15px; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+        
+        /* 进度条 */
+        .progress-bar { height: 8px; background: #e0e0e0; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+        .progress-bar .fill { height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; }
+        
+        .tip-box { background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%); padding: 15px 20px; border-radius: 12px; margin-top: 20px; border-left: 4px solid #f39c12; }
+        .tip-box h4 { color: #856404; margin-bottom: 8px; font-size: 15px; }
+        .tip-box p { color: #856404; font-size: 13px; line-height: 1.6; margin: 0; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>⚙️ 系统设置</h1>
+            <nav class="nav">
+                <a href="/admin">仪表盘</a>
+                <a href="/admin/new">新建文章</a>
+                <a href="/admin/comments">评论管理{{if .PendingComments}}<span style="background:#e74c3c;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:5px;">{{.PendingComments}}</span>{{end}}</a>
+                <a href="/admin/carousel">轮播图</a>
+                <a href="/admin/users">用户管理</a>
+                <a href="/admin/settings" class="active">系统设置</a>
+                <a href="/">查看网站</a>
+                <a href="/admin/logout" class="logout">退出登录</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {{if .Success}}
+        <div class="alert alert-success">✅ {{.Success}}</div>
+        {{end}}
+        {{if .Error}}
+        <div class="alert alert-danger">❌ {{.Error}}</div>
+        {{end}}
+
+        <!-- 数据统计概览 -->
+        <div class="settings-section">
+            <h2>📊 数据统计概览</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">📝</div>
+                    <div class="number">{{.TotalPosts}}</div>
+                    <div class="label">文章总数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">👥</div>
+                    <div class="number">{{.TotalUsers}}</div>
+                    <div class="label">注册用户</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">💬</div>
+                    <div class="number">{{.TotalComments}}</div>
+                    <div class="label">评论总数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🎠</div>
+                    <div class="number">{{.ActiveSlides}}</div>
+                    <div class="label">活跃轮播图</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 系统信息 -->
+        <div class="settings-section">
+            <h2>🖥️ 系统信息</h2>
+            
+            <div class="sys-info-card">
+                <h4>📦 应用程序</h4>
+                <table class="info-table">
+                    <tr>
+                        <td>应用名称</td>
+                        <td><strong>Blog System</strong></td>
+                    </tr>
+                    <tr>
+                        <td>版本号</td>
+                        <td><code>v2.0.0</code></td>
+                    </tr>
+                    <tr>
+                        <td>框架</td>
+                        <td><code>Iris v12.2.11</code> (Go Web Framework)</td>
+                    </tr>
+                    <tr>
+                        <td>运行时</td>
+                        <td><code>Go 1.26.2</code></td>
+                    </tr>
+                    <tr>
+                        <td>服务地址</td>
+                        <td><code>http://localhost:8080</code></td>
+                    </tr>
+                    <tr>
+                        <td>服务状态</td>
+                        <td><span class="status-badge status-online">● 运行中</span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="sys-info-card">
+                <h4>🗄️ 数据库信息</h4>
+                <table class="info-table">
+                    <tr>
+                        <td>数据库类型</td>
+                        <td><strong>MariaDB</strong> (MySQL Compatible)</td>
+                    </tr>
+                    <tr>
+                        <td>服务器地址</td>
+                        <td><code>{{.DBHost}}:{{.DBPort}}</code></td>
+                    </tr>
+                    <tr>
+                        <td>数据库名</td>
+                        <td><code>{{.DBName}}</code></td>
+                    </tr>
+                    <tr>
+                        <td>字符集</td>
+                        <td><code>utf8mb4</code></td>
+                    </tr>
+                    <tr>
+                        <td>存储引擎</td>
+                        <td><code>InnoDB</code></td>
+                    </tr>
+                    <tr>
+                        <td>连接状态</td>
+                        <td><span class="status-badge status-online">● 已连接</span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="sys-info-card">
+                <h4>📊 数据表统计</h4>
+                <table class="info-table">
+                    <tr>
+                        <td>posts 表</td>
+                        <td><code>{{.TotalPosts}}</code> 条记录</td>
+                    </tr>
+                    <tr>
+                        <td>users 表</td>
+                        <td><code>{{.TotalUsers}}</code> 条记录</td>
+                    </tr>
+                    <tr>
+                        <td>comments 表</td>
+                        <td><code>{{.TotalComments}}</code> 条记录</td>
+                    </tr>
+                    <tr>
+                        <td>carousel 表</td>
+                        <td><code>{{.TotalSlides}}</code> 条记录</td>
+                    </tr>
+                    <tr>
+                        <td>settings 表</td>
+                        <td><code>1</code> 条记录 (系统配置)</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- 修改管理员密码 -->
+        <div class="settings-section">
+            <h2>🔐 修改管理员密码</h2>
+            <form method="POST" action="/admin/settings/password">
+                <div class="form-group">
+                    <label for="current_password">当前密码</label>
+                    <input type="password" id="current_password" name="current_password" required placeholder="请输入当前管理员密码">
+                </div>
+                <div class="form-group">
+                    <label for="new_password">新密码</label>
+                    <input type="password" id="new_password" name="new_password" required placeholder="请输入新密码（至少6位）">
+                    <p class="hint">建议使用8位以上包含字母、数字的强密码</p>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">确认新密码</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required placeholder="请再次输入新密码">
+                </div>
+                <button type="submit" class="btn btn-success">✅ 更新密码</button>
+            </form>
+            <div class="tip-box">
+                <h4>💡 安全提示</h4>
+                <p>修改密码后，下次登录管理后台时需要使用新密码。请妥善保管您的密码，不要与他人分享。建议定期更换密码以提高安全性。</p>
+            </div>
+        </div>
+
+        <!-- 系统操作 -->
+        <div class="settings-section">
+            <h2>🔧 系统操作</h2>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <a href="/" class="btn" target="_blank">🌐 访问网站</a>
+                <a href="/admin" class="btn">📊 返回仪表盘</a>
+                <a href="/admin/logout" class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">🚪 退出登录</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

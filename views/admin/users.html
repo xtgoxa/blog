@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .header { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .header-content { max-width: 1200px; margin: 0 auto; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav { display: flex; gap: 20px; flex-wrap: wrap; }
+        .nav a { color: #667eea; text-decoration: none; font-weight: 500; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav a:hover { background: #f0f3ff; }
+        .nav a.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; }
+        .nav a.logout { color: #e74c3c; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+        
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        .stat-card h3 { color: #7f8c8d; font-size: 14px; margin-bottom: 10px; }
+        .stat-card .number { font-size: 36px; font-weight: 700; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .table-container { background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 18px 20px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+        th { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; font-weight: 600; }
+        tr:hover { background: #f8f9fa; }
+        
+        .role-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .role-admin { background: #d4edda; color: #155724; }
+        .role-user { background: #fff3cd; color: #856404; }
+        
+        .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn { padding: 8px 16px; border: none; border-radius: 20px; font-size: 13px; cursor: pointer; text-decoration: none; font-weight: 500; transition: all 0.3s; }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; }
+        .btn-success { background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: #fff; }
+        .btn-danger { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: #fff; }
+        .btn-sm { padding: 8px 16px; font-size: 13px; }
+        
+        .empty-state { text-align: center; padding: 60px; background: #fff; border-radius: 15px; color: #7f8c8d; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .empty-state h3 { font-size: 24px; color: #2c3e50; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1>👥 用户管理</h1>
+            <nav class="nav">
+                <a href="/admin">仪表盘</a>
+                <a href="/admin/new">新建文章</a>
+                <a href="/admin/comments">评论管理{{if .PendingComments}}<span style="background:#e74c3c;color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:5px;">{{.PendingComments}}</span>{{end}}</a>
+                <a href="/admin/carousel">轮播图</a>
+                <a href="/admin/users" class="active">用户管理</a>
+                <a href="/admin/settings">系统设置</a>
+                <a href="/">查看网站</a>
+                <a href="/admin/logout" class="logout">退出登录</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="stats">
+            <div class="stat-card">
+                <h3>👥 总用户数</h3>
+                <div class="number">{{.TotalUsers}}</div>
+            </div>
+            <div class="stat-card">
+                <h3>👑 管理员</h3>
+                <div class="number">{{.AdminCount}}</div>
+            </div>
+            <div class="stat-card">
+                <h3>👤 普通用户</h3>
+                <div class="number">{{.UserCount}}</div>
+            </div>
+        </div>
+
+        {{if .Users}}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>邮箱</th>
+                        <th>角色</th>
+                        <th>注册时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {{range .Users}}
+                    <tr>
+                        <td>{{.ID}}</td>
+                        <td><strong>{{.Username}}</strong></td>
+                        <td>{{.Email}}</td>
+                        <td>
+                            <span class="role-badge role-{{.Role}}">{{if eq .Role "admin"}}管理员{{else}}普通用户{{end}}</span>
+                        </td>
+                        <td>{{.CreatedAt.Format "2006-01-02 15:04"}}</td>
+                        <td>
+                            <div class="actions">
+                                {{if eq .Role "user"}}
+                                <a href="/admin/user/promote/{{.ID}}" class="btn btn-sm btn-success" onclick="return confirm('确定要将此用户提升为管理员吗？')">提升为管理员</a>
+                                {{else}}
+                                <a href="/admin/user/demote/{{.ID}}" class="btn btn-sm btn-primary" onclick="return confirm('确定要将此管理员降为普通用户吗？')">降为普通用户</a>
+                                {{end}}
+                                <a href="/admin/user/delete/{{.ID}}" class="btn btn-sm btn-danger" onclick="return confirm('⚠️ 确定要删除此用户吗？此操作不可恢复！')">删除</a>
+                            </div>
+                        </td>
+                    </tr>
+                {{end}}
+                </tbody>
+            </table>
+        </div>
+        {{else}}
+        <div class="empty-state">
+            <h3>暂无用户</h3>
+            <p>还没有注册用户</p>
+        </div>
+        {{end}}
+    </main>
+</body>
+</html>

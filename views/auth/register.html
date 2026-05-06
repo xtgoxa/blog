@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .auth-container {
+            background: #fff;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+            margin: 20px;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .auth-header h1 {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .auth-header p {
+            color: #95a5a6;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 15px;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #95a5a6;
+        }
+        .auth-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .auth-footer a:hover { text-decoration: underline; }
+
+        .error-message {
+            background: #fee;
+            color: #c00;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .back-home {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #95a5a6;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-home:hover { color: #667eea; }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>创建账户 🎉</h1>
+            <p>加入我们的社区</p>
+        </div>
+
+        {{if .Error}}
+        <div class="error-message">{{.Error}}</div>
+        {{end}}
+
+        <form method="POST" action="/register">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" required placeholder="请输入用户名">
+            </div>
+
+            <div class="form-group">
+                <label for="email">邮箱</label>
+                <input type="email" id="email" name="email" required placeholder="请输入邮箱地址">
+            </div>
+
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" required placeholder="请输入密码">
+            </div>
+
+            <div class="form-group">
+                <label for="confirm">确认密码</label>
+                <input type="password" id="confirm" name="confirm" required placeholder="请再次输入密码">
+            </div>
+
+            <button type="submit" class="btn-submit">注册</button>
+        </form>
+
+        <div class="auth-footer">
+            已有账户？<a href="/login">立即登录</a>
+        </div>
+
+        <a href="/" class="back-home">← 返回首页</a>
+    </div>
+</body>
+</html>

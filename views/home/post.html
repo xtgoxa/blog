@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+        .nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        .nav a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav a:hover { color: #667eea; }
+        .nav .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+        .btn-logout { color: #e74c3c; text-decoration: none; }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+        }
+        .user-menu { display: flex; align-items: center; gap: 15px; }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .post-container {
+            background: #fff;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .post-header {
+            margin-bottom: 40px;
+        }
+        .post-category {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .post-title {
+            font-size: 42px;
+            color: #2c3e50;
+            margin: 20px 0;
+            line-height: 1.3;
+        }
+        .post-meta {
+            display: flex;
+            gap: 30px;
+            color: #95a5a6;
+            font-size: 16px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .post-content {
+            font-size: 18px;
+            line-height: 2;
+            color: #34495e;
+            margin-bottom: 50px;
+            white-space: pre-wrap;
+        }
+
+        .post-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+        }
+        .tag {
+            background: #f0f3ff;
+            color: #667eea;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            margin-top: 50px;
+            padding-top: 50px;
+            border-top: 3px solid #f0f0f0;
+        }
+        .comments-title {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        .comment-form {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        .comment-form textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        .comment-form textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .comment-form button {
+            margin-top: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .comment-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .login-hint {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        .login-hint a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .comment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .comment {
+            background: #fff;
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 25px;
+            transition: border-color 0.3s;
+        }
+        .comment:hover { border-color: #667eea; }
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .comment-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .comment-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        .comment-username {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        .comment-date {
+            color: #95a5a6;
+            font-size: 14px;
+        }
+        .comment-content {
+            color: #34495e;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .no-comments {
+            text-align: center;
+            color: #95a5a6;
+            padding: 40px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #fff;
+            text-decoration: none;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        .back-link:hover { gap: 12px; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">我的博客</a>
+            <nav class="nav">
+                <a href="/">首页</a>
+                <a href="/about">关于</a>
+                {{if .User}}
+                <a href="/admin">管理后台</a>
+                <div class="user-menu">
+                    <div class="user-avatar">{{.User.Username}}</div>
+                    <a href="/logout" class="btn-logout">退出登录</a>
+                </div>
+                {{else}}
+                <a href="/register">注册</a>
+                <a href="/login" class="btn-login">登录</a>
+                {{end}}
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <a href="/" class="back-link">← 返回首页</a>
+        
+        <article class="post-container">
+            <div class="post-header">
+                <span class="post-category">{{.Post.Category}}</span>
+                <h1 class="post-title">{{.Post.Title}}</h1>
+                <div class="post-meta">
+                    <span>✍️ 作者: {{.Post.Author}}</span>
+                    <span>📅 发布于 {{.Post.CreatedAt}}</span>
+                </div>
+            </div>
+
+            <div class="post-content">
+                {{.Post.Content}}
+            </div>
+
+            {{if .Post.Tags}}
+            <div class="post-tags">
+                {{range split .Post.Tags ","}}
+                <span class="tag">#{{.}}</span>
+                {{end}}
+            </div>
+            {{end}}
+        </article>
+
+        <!-- Comments Section -->
+        <section class="comments-section">
+            <h2 class="comments-title">💬 评论 ({{len .Comments}})</h2>
+
+            {{if .User}}
+            <form class="comment-form" method="POST" action="/post/{{.Post.ID}}/comment">
+                <textarea name="content" placeholder="分享你的想法..." required></textarea>
+                <button type="submit">发表评论</button>
+                <p style="margin-top: 10px; color: #7f8c8d; font-size: 14px;">📝 您的评论将在审核后显示。</p>
+            </form>
+            {{else}}
+            <div class="login-hint">
+                <p>🔒 请 <a href="/login">登录</a> 后发表评论。</p>
+            </div>
+            {{end}}
+
+            <div class="comment-list">
+            {{range .Comments}}
+                <div class="comment">
+                    <div class="comment-header">
+                        <div class="comment-author">
+                            <div class="comment-avatar">{{.Username}}</div>
+                            <span class="comment-username">{{.Username}}</span>
+                        </div>
+                        <span class="comment-date">{{.CreatedAt}}</span>
+                    </div>
+                    <p class="comment-content">{{.Content}}</p>
+                </div>
+            {{else}}
+                <p class="no-comments">暂无评论，快来抢沙发吧！</p>
+            {{end}}
+            </div>
+        </section>
+    </main>
+</body>
+</html>
