@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .container { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
+        .header { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); color: #2c3e50; padding: 20px 30px; margin-bottom: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav { display: flex; gap: 15px; }
+        .nav a { color: #667eea; text-decoration: none; font-weight: 500; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav a:hover { background: #f0f3ff; }
+        .form-container { background: #fff; border-radius: 20px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; margin-bottom: 10px; font-weight: 600; color: #2c3e50; font-size: 15px; }
+        .form-group input, .form-group textarea, .form-group select { 
+            width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { 
+            outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .form-group textarea { min-height: 200px; resize: vertical; font-family: inherit; }
+        .form-actions { margin-top: 30px; display: flex; gap: 15px; }
+        .btn { padding: 14px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; text-decoration: none; border-radius: 25px; border: none; cursor: pointer; font-weight: 600; font-size: 16px; transition: transform 0.3s, box-shadow 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
+        .btn-success { background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); }
+        .btn-secondary { background: #95a5a6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✏️ 编辑文章</h1>
+            <div class="nav">
+                <a href="/admin">← 返回后台</a>
+                <a href="/post/{{.Post.ID}}" target="_blank">查看文章</a>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <form method="POST" action="/admin/edit/{{.Post.ID}}">
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                <div class="form-group">
+                    <label for="title">📝 文章标题</label>
+                    <input type="text" id="title" name="title" value="{{.Post.Title}}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="author">👤 作者</label>
+                    <input type="text" id="author" name="author" value="{{.Post.Author}}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="category">📁 分类</label>
+                    <select id="category" name="category">
+                        <option value="Tech" {{if eq .Post.Category "Tech"}}selected{{end}}>技术</option>
+                        <option value="Tutorial" {{if eq .Post.Category "Tutorial"}}selected{{end}}>教程</option>
+                        <option value="Life" {{if eq .Post.Category "Life"}}selected{{end}}>生活</option>
+                        <option value="Travel" {{if eq .Post.Category "Travel"}}selected{{end}}>旅行</option>
+                        <option value="Food" {{if eq .Post.Category "Food"}}selected{{end}}>美食</option>
+                        <option value="Other" {{if eq .Post.Category "Other"}}selected{{end}}>其他</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">📄 文章内容</label>
+                    <textarea id="content" name="content" rows="12" required>{{.Post.Content}}</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tags">🏷️ 标签（用逗号分隔）</label>
+                    <input type="text" id="tags" name="tags" value="{{.Post.Tags}}">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">✅ 保存修改</button>
+                    <a href="/admin" class="btn btn-secondary">取消</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

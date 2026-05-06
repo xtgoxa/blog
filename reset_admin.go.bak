@@ -1,0 +1,66 @@
+package main
+
+import (
+	"database/sql"
+	"fmt"
+	"log"
+	"os"
+
+	_ "github.com/go-sql-driver/mysql"
+	"golang.org/x/crypto/bcrypt"
+)
+
+func main() {
+	dbHost := os.Getenv("DB_HOST")
+	if dbHost == "" {
+		dbHost = "172.31.224.1"
+	}
+	dbUser := os.Getenv("DB_USER")
+	if dbUser == "" {
+		dbUser = "root"
+	}
+	dbPass := os.Getenv("DB_PASS")
+	if dbPass == "" {
+		dbPass = "331563615"
+	}
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/blog?charset=utf8mb4&parseTime=True&loc=Local",
+		dbUser, dbPass, dbHost)
+
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		log.Fatal("open failed:", err)
+	}
+	defer db.Close()
+
+	if err := db.Ping(); err != nil {
+		log.Fatal("ping failed:", err)
+	}
+
+	// Hash new password
+	hashed, err := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatal("bcrypt failed:", err)
+	}
+
+	result, err := db.Exec("UPDATE settings SET key_value = ? WHERE key_name = 'admin_password'", string(hashed))
+	if err != nil {
+		log.Fatal("update failed:", err)
+	}
+
+	rows, _ := result.RowsAffected()
+	log.Printf("admin password reset. rows affected: %d", rows)
+
+	// Verify
+	var stored string
+	db.QueryRow("SELECT key_value FROM settings WHERE key_name = 'admin_password'").Scan(&stored)
+	log.Printf("stored hash length: %d", len(stored))
+
+	// Verify password works
+	err = bcrypt.CompareHashAndPassword([]byte(stored), []byte("admin123"))
+	if err != nil {
+		log.Printf("verify FAILED: %v", err)
+	} else {
+		log.Printf("verify OK: password 'admin123' matches stored hash")
+	}
+}

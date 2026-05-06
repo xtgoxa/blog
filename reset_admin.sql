@@ -1,0 +1,1 @@
+SELECT key_name, key_value FROM settings;

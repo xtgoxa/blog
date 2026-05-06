@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+        .nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        .nav a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav a:hover { color: #667eea; }
+        .nav .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .nav .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            color: #fff;
+        }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+        }
+        .btn-logout {
+            color: #e74c3c;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            color: #fff;
+        }
+        .hero h1 {
+            font-size: 56px;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .hero p {
+            font-size: 20px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+        .hero-btns {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .hero-btn {
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .hero-btn-primary {
+            background: #fff;
+            color: #667eea;
+        }
+        .hero-btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        .hero-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Search Section */
+        .search-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            margin: 20px auto;
+            max-width: 1200px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+        .search-form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .search-input-group {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+        .search-input-group input {
+            width: 100%;
+            padding: 18px 20px 18px 50px;
+            border: 2px solid #e0e0e0;
+            border-radius: 30px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background: #f8f9fa;
+        }
+        .search-input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: #fff;
+        }
+        .search-input-group::before {
+            content: "🔍";
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+        }
+        .search-select {
+            padding: 18px 25px;
+            border: 2px solid #e0e0e0;
+            border-radius: 30px;
+            font-size: 16px;
+            background: #f8f9fa;
+            cursor: pointer;
+            min-width: 150px;
+        }
+        .search-select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #fff;
+        }
+        .search-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            padding: 18px 35px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Carousel */
+        .carousel-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            position: relative;
+            overflow: hidden;
+            border-radius: 25px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+        }
+        .carousel {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .carousel-slide {
+            min-width: 100%;
+            height: 450px;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .carousel-slide::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%);
+        }
+        .carousel-slide.no-image::before {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .carousel-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: #fff;
+            padding: 40px;
+            max-width: 700px;
+        }
+        .carousel-content h2 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+        }
+        .carousel-content p {
+            font-size: 22px;
+            opacity: 0.95;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+        .carousel-content a {
+            display: inline-block;
+            background: #fff;
+            color: #667eea;
+            padding: 18px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 18px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .carousel-content a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .carousel-btn:hover {
+            background: #fff;
+            transform: translateY(-50%) scale(1.1);
+        }
+        .carousel-btn.prev { left: 25px; }
+        .carousel-btn.next { right: 25px; }
+        .carousel-dots {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 10;
+        }
+        .carousel-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .carousel-dot.active {
+            background: #fff;
+            transform: scale(1.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
+        
+        .section-title {
+            font-size: 36px;
+            color: #fff;
+            margin: 50px 0 25px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        
+        /* Post Cards */
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 30px;
+            margin-top: 35px;
+        }
+        .post-card {
+            background: #fff;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            transition: all 0.4s;
+        }
+        .post-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+        .post-card-header {
+            padding: 35px 35px 25px;
+        }
+        .post-category {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .post-card h2 {
+            margin: 18px 0;
+            font-size: 26px;
+            color: #2c3e50;
+            line-height: 1.4;
+        }
+        .post-card h2 a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .post-card h2 a:hover { color: #667eea; }
+        .post-meta {
+            display: flex;
+            gap: 25px;
+            color: #95a5a6;
+            font-size: 14px;
+        }
+        .post-card-body {
+            padding: 0 35px 35px;
+        }
+        .post-excerpt {
+            color: #7f8c8d;
+            line-height: 1.9;
+            margin-bottom: 25px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-size: 15px;
+        }
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: gap 0.3s;
+            font-size: 15px;
+        }
+        .read-more:hover { gap: 12px; }
+
+        /* Tags */
+        .tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+        .tag {
+            background: #f0f3ff;
+            color: #667eea;
+            padding: 5px 14px;
+            border-radius: 18px;
+            font-size: 13px;
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 80px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            color: #7f8c8d;
+        }
+        .no-results h3 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 50px 20px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .footer-links {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .footer-links a:hover { text-decoration: underline; }
+
+        @media (max-width: 768px) {
+            .carousel-slide { height: 350px; }
+            .carousel-content h2 { font-size: 32px; }
+            .carousel-content p { font-size: 16px; }
+            .posts-grid { grid-template-columns: 1fr; }
+            .nav { gap: 15px; }
+            .search-form { flex-direction: column; }
+            .search-input-group { min-width: 100%; }
+            .hero h1 { font-size: 36px; }
+            .section-title { font-size: 28px; }
+            .post-card-header, .post-card-body { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">我的博客</a>
+            <nav class="nav">
+                <a href="/">首页</a>
+                <a href="/about">关于</a>
+                {{if .User}}
+                <a href="/admin">管理后台</a>
+                <div class="user-menu">
+                    <div class="user-avatar">{{.User.Username}}</div>
+                    <a href="/logout" class="btn-logout">退出登录</a>
+                </div>
+                {{else}}
+                <a href="/register">注册</a>
+                <a href="/login" class="btn-login">登录</a>
+                {{end}}
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section (shown when no search) -->
+    {{if not .Query}}
+    {{if eq (len .Slides) 0}}
+    <section class="hero">
+        <h1>欢迎来到我的博客</h1>
+        <p>探索技术世界，分享编程心得，记录成长足迹</p>
+        <div class="hero-btns">
+            <a href="/about" class="hero-btn hero-btn-primary">了解更多</a>
+            <a href="/register" class="hero-btn hero-btn-secondary">加入我们</a>
+        </div>
+    </section>
+    {{end}}
+    {{end}}
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <form class="search-form" method="GET" action="/">
+            <div class="search-input-group">
+                <input type="text" name="q" placeholder="搜索文章标题、内容或标签..." value="{{.Query}}">
+            </div>
+            <select name="category" class="search-select">
+                <option value="">全部分类</option>
+                <option value="Tech" {{if eq .Category "Tech"}}selected{{end}}>技术</option>
+                <option value="Tutorial" {{if eq .Category "Tutorial"}}selected{{end}}>教程</option>
+                <option value="Life" {{if eq .Category "Life"}}selected{{end}}>生活</option>
+                <option value="Travel" {{if eq .Category "Travel"}}selected{{end}}>旅行</option>
+                <option value="Food" {{if eq .Category "Food"}}selected{{end}}>美食</option>
+            </select>
+            <select name="sort" class="search-select">
+                <option value="newest" {{if eq .Sort "newest"}}selected{{end}}>最新发布</option>
+                <option value="oldest" {{if eq .Sort "oldest"}}selected{{end}}>最早发布</option>
+            </select>
+            <button type="submit" class="search-btn">搜索</button>
+        </form>
+    </section>
+
+    <!-- Carousel -->
+    {{if not .Query}}
+    {{if gt (len .Slides) 0}}
+    <div class="carousel-container">
+        <div class="carousel" id="carousel">
+        {{range $index, $slide := .Slides}}
+            <div class="carousel-slide {{if not $slide.ImageURL}}no-image{{end}}" 
+                 {{if $slide.ImageURL}}style="background-image: url('{{$slide.ImageURL}}');"{{end}}>
+                <div class="carousel-content">
+                    <h2>{{$slide.Title}}</h2>
+                    {{if $slide.Subtitle}}<p>{{$slide.Subtitle}}</p>{{end}}
+                    {{if $slide.ButtonText}}
+                    <a href="{{$slide.ButtonLink}}">{{$slide.ButtonText}}</a>
+                    {{end}}
+                </div>
+            </div>
+        {{end}}
+        </div>
+        <button class="carousel-btn prev" onclick="prevSlide()">❮</button>
+        <button class="carousel-btn next" onclick="nextSlide()">❯</button>
+        <div class="carousel-dots">
+        {{range $index, $slide := .Slides}}
+            <span class="carousel-dot {{if eq $index 0}}active{{end}}" onclick="goToSlide({{$index}})"></span>
+        {{end}}
+        </div>
+    </div>
+    {{end}}
+    {{end}}
+
+    <main class="container">
+        {{if .Query}}
+        <h2 class="section-title">🔍 搜索结果: "{{.Query}}"</h2>
+        {{else}}
+        <h2 class="section-title">📝 最新文章</h2>
+        {{end}}
+        
+        {{if .Posts}}
+        <div class="posts-grid">
+        {{range .Posts}}
+            <article class="post-card">
+                <div class="post-card-header">
+                    <span class="post-category">{{.Category}}</span>
+                    <h2><a href="/post/{{.ID}}">{{.Title}}</a></h2>
+                    <div class="post-meta">
+                        <span>✍️ {{.Author}}</span>
+                        <span>📅 {{.CreatedAt}}</span>
+                    </div>
+                </div>
+                <div class="post-card-body">
+                    <p class="post-excerpt">{{.Content}}</p>
+                    <a href="/post/{{.ID}}" class="read-more">阅读全文 →</a>
+                    {{if .Tags}}
+                    <div class="tags">
+                        {{range split .Tags ","}}
+                        <span class="tag">#{{.}}</span>
+                        {{end}}
+                    </div>
+                    {{end}}
+                </div>
+            </article>
+        {{end}}
+        </div>
+        {{else}}
+        <div class="no-results">
+            <h3>😕 没有找到相关文章</h3>
+            <p>试试其他关键词或分类？</p>
+        </div>
+        {{end}}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="/">首页</a>
+            <a href="/about">关于</a>
+            <a href="/register">注册</a>
+            <a href="/login">登录</a>
+        </div>
+        <p>© 2026 我的博客. 使用 Go & Iris 构建 ❤️</p>
+    </footer>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = {{len .Slides}};
+        const carousel = document.getElementById('carousel');
+        const dots = document.querySelectorAll('.carousel-dot');
+
+        function updateCarousel() {
+            if (!carousel) return;
+            carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateCarousel();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateCarousel();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateCarousel();
+        }
+
+        // Auto-advance every 5 seconds
+        if (totalSlides > 1) {
+            setInterval(nextSlide, 5000);
+        }
+    </script>
+</body>
+</html>
